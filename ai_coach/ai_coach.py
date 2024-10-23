@@ -8,6 +8,7 @@ from django.conf import settings
 import importlib_resources
 import logging
 import json
+import requests
 
 from openai import OpenAI
 
@@ -118,11 +119,10 @@ class AICoachXBlock(XBlock, StudioEditableXBlockMixin, CompletableXBlockMixin):
         """
         api_key = self.api_key
         try:
-            client = OpenAI(api_key=api_key)
-            return client
+            raise Exception("Erro get_openai_client")
         except Exception:
             # Handle the exception as appropriate for your application
-            return {'error': _('Failed to initialize OpenAI client')}
+            return {'error': _('Erro get_openai_client')}
 
     def resource_string(self, path):
         """Handy helper for getting resources from our kit."""
@@ -162,58 +162,56 @@ class AICoachXBlock(XBlock, StudioEditableXBlockMixin, CompletableXBlockMixin):
             self, prompt='', model='gpt-3.5-turbo', temperature=0.5, max_tokens=150, n=1
     ):
         """ Returns the improvement for student answer using ChatGPT Model """
-        client = self.get_openai_client()
-        if client is None:
-            return {'error': _('Unable to initialize OpenAI client. Please check configuration.')}
+        # client = self.get_openai_client()
+        # if client is None:
+        #     return {'error': _('Unable to initialize OpenAI client. Please check configuration.')}
 
-        messages = [{"role": "user", "content": prompt}]
+        # messages = [{"role": "user", "content": prompt}]
         try:
-            response = client.chat.completions.create(messages=messages,
-                                                      model=model,
-                                                      temperature=temperature,
-                                                      max_tokens=max_tokens,
-                                                      n=n)
+            return {'response': _('OK')}
+
         except Exception as err:
             log.error(err)
-            return {'error': _('Unable to connect to AI-coach. Please contact your administrator')}
-
-        return {'response': response.choices[0].message.content}
+            return {'error': _('Falha')}
 
     @XBlock.json_handler
     def ask_from_coach(self, data, suffix=''):
 
-        if not data['answer']:
-            return {'error': _('Answer must be required')}
+        try:
+            if not data['answer']:
+                return {'error': _('Resposta necessária')}
 
-        if self.feedback_count >= self.feedback_threshold:
-            return {'error': _("You've exhausted all available chances to ask the coach for help")}
+            if self.feedback_count >= self.feedback_threshold:
+                return {'error': _("You've")}
 
-        student_answer = data['answer'].strip()
-        prompt = self.context.replace('{{question}}', f'"{self.question}"')
-        prompt = prompt.replace('{{answer}}', f'"{student_answer}"')
+            student_answer = data['answer'].strip()
+            prompt = self.context.replace('{{question}}', f'"{self.question}"')
+            prompt = prompt.replace('{{answer}}', f'"{student_answer}"')
 
-        url_api = "http://127.0.0.1:5000/chatbot/"
+            url_api = "http://127.0.0.1:5000/chatbot/"
 
-        data = {
-            "message": prompt
-        }
+            data = {
+                "message": prompt
+            }
 
-        response = requests.post(url_api, headers={"Content-Type": "application/json"}, data=json.dumps(data))   
+            response = requests.post(url_api, headers={"Content-Type": "application/json"}, data=json.dumps(data))   
 
-        coach_answer = response.json()
-        self.feedback_count += 1
-        return {
-            'success': True,
-            'coach_answer': coach_answer,
-            'feedback_count': self.feedback_count,
-            'feedback_threshold': self.feedback_threshold
-        }
+            coach_answer = response.json()
+            self.feedback_count += 1
+            return {
+                'success': True,
+                'coach_answer': coach_answer,
+                'feedback_count': self.feedback_count,
+                'feedback_threshold': self.feedback_threshold
+            }
+        except Exception as ex:
+            return {'error': _(str(ex))}
 
     @XBlock.json_handler
     def submit_answer(self, data, suffix=''):
 
         if not data['answer']:
-            return {'error': _('Answer must be required')}
+            return {'error': _('Erro submir_answer')}
 
         self.student_answer = data['answer'].strip()
         self.emit_completion(1.0)
