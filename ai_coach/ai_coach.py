@@ -7,6 +7,7 @@ from django.template import Context, Template
 from django.conf import settings
 import importlib_resources
 import logging
+import json
 
 from openai import OpenAI
 
@@ -191,14 +192,15 @@ class AICoachXBlock(XBlock, StudioEditableXBlockMixin, CompletableXBlockMixin):
         prompt = self.context.replace('{{question}}', f'"{self.question}"')
         prompt = prompt.replace('{{answer}}', f'"{student_answer}"')
 
-        response = self.get_chat_completion(
-            prompt, self.model_name, self.temperature
-        )
+        url_api = "http://127.0.0.1:5000/chatbot/"
 
-        if 'error' in response:
-            return {'error': response['error']}
+        data = {
+            "message": prompt
+        }
 
-        coach_answer = response['response']
+        response = requests.post(url_api, headers={"Content-Type": "application/json"}, data=json.dumps(data))   
+
+        coach_answer = response.json()
         self.feedback_count += 1
         return {
             'success': True,
