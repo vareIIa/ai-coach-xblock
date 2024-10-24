@@ -188,7 +188,7 @@ class AICoachXBlock(XBlock, StudioEditableXBlockMixin, CompletableXBlockMixin):
             prompt = self.context.replace('{{question}}', f'"{self.question}"')
             prompt = prompt.replace('{{answer}}', f'"{student_answer}"')
 
-            url_api = "http://127.0.0.1:5000/chatbot/"
+            url_api = "http://147.79.82.77:5000/chatbot/"
 
             data = {
                 "message": prompt
