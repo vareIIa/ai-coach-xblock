@@ -196,14 +196,17 @@ class AICoachXBlock(XBlock, StudioEditableXBlockMixin, CompletableXBlockMixin):
 
             response = requests.post(url_api, headers={"Content-Type": "application/json"}, data=json.dumps(data))   
 
-            coach_answer = response.json()
-            self.feedback_count += 1
-            return {
-                'success': True,
-                'coach_answer': coach_answer,
-                'feedback_count': self.feedback_count,
-                'feedback_threshold': self.feedback_threshold
-            }
+            if response.status_code == 200:
+                coach_answer = response.json()['response']
+                self.feedback_count += 1
+                return {
+                    'success': True,
+                    'coach_answer': coach_answer,
+                    'feedback_count': self.feedback_count,
+                    'feedback_threshold': self.feedback_threshold
+                }
+            else:
+                return {'error': _('Falha na comunicação com o coach de IA.')}
         except Exception as ex:
             return {'error': _(str(ex))}
 
