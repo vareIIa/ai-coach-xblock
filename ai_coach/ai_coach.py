@@ -10,9 +10,6 @@ import logging
 import json
 import requests
 
-from openai import OpenAI
-
-
 log = logging.getLogger(__name__)
 
 
@@ -113,17 +110,6 @@ class AICoachXBlock(XBlock, StudioEditableXBlockMixin, CompletableXBlockMixin):
         'feedback_threshold'
     ]
 
-    def get_openai_client(self):
-        """
-        Initialize and return an OpenAI client using the API key stored in the XBlock settings.
-        """
-        api_key = self.api_key
-        try:
-            raise Exception("Erro get_openai_client")
-        except Exception:
-            # Handle the exception as appropriate for your application
-            return {'error': _('Erro get_openai_client')}
-
     def resource_string(self, path):
         """Handy helper for getting resources from our kit."""
         data = importlib_resources.files(__name__).joinpath(path).read_bytes()
@@ -188,13 +174,16 @@ class AICoachXBlock(XBlock, StudioEditableXBlockMixin, CompletableXBlockMixin):
             prompt = self.context.replace('{{question}}', f'"{self.question}"')
             prompt = prompt.replace('{{answer}}', f'"{student_answer}"')
 
-            url_api = "http://147.79.82.77:5000/chatbot/"
+            url_api = "http://147.79.111.214:5000/chatbot/"
 
             data = {
                 "message": prompt
             }
-
-            response = requests.post(url_api, headers={"Content-Type": "application/json"}, data=json.dumps(data))   
+            headers = {
+                "Content-Type": "application/json",
+                "api-key": "b7fe1fd2-7074-4ae0-95ec-23f637695b87"
+            }
+            response = requests.post(url_api, headers=headers, data=json.dumps(data))   
 
             if response.status_code == 200:
                 coach_answer = response.json()['response']
