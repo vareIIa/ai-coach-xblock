@@ -14,7 +14,7 @@ function AICoachXBlock(runtime, element, args) {
     function showSuccessMessage() {
         messageContainerElement.addClass('bg-success');
         messageContainerElement.removeClass('message--hide');
-        messageTextElement.text(gettext('Answer submitted successfully'));
+        messageTextElement.text(gettext('Resposta solicitada com sucesso'));
     }
 
     function showErrorMessage(error) {
@@ -30,10 +30,10 @@ function AICoachXBlock(runtime, element, args) {
     }
 
     function updateTooltipText() {
-        let tooltipText = gettext("You've exhausted all available chances to ask the coach for help")
+        let tooltipText = gettext("Você gastou todas suas solicitações de ajuda")
         if (feedback_count < feedback_threshold) {
             tooltipText = edx.StringUtils.interpolate(
-                gettext('You have {feedback_chances} chance{pluralize} left for requesting feedback from the coach'),
+                gettext('Você tem {feedback_chances} chance{pluralize} sobrando para solicitar o Coach'),
                 {
                     feedback_chances: feedback_threshold - feedback_count,
                     pluralize: feedback_threshold - feedback_count > 1 ? 's' : ''
