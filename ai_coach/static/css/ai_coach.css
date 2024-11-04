@@ -32,7 +32,9 @@
     line-height: 21px;
     font-weight: 600;
 }
-
+.d-flex {
+    gap: 10px !important;
+}
 .ai_coach_block .ai_coach_wrapper .question-response-container,
 .ai_coach_block .ai_coach_wrapper .coach-answer-container {
     width: 48%;
@@ -91,7 +93,7 @@
 }
 
 .response-container .response-text-container:placeholder-shown~div .btn-primary,
-.response-container .response-text-container:placeholder-shown~div .btn-primary:hover{
+.response-container .response-text-container:placeholder-shown~div .btn-primary:hover {
     background: #fff;
     border-color: #b4b3b3;
     color: #b4b3b3;
@@ -99,12 +101,32 @@
     pointer-events: none;
 }
 
+.ai_coach_block>.ai_coach_wrapper {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+
+}
+
+.ai_coach_block .question-response-container .btn-primary {
+    border-radius: 4px;
+    padding: 10px 40px;
+    background: #8C44FF !important;
+    border: 1px solid #8C44FF !important;
+    color: #fff !important;
+    width: 200px !important;
+}
+
+.ai_coach_block .question-response-container .btn-primary:hover {
+    background: #8C44FF !important;
+    color: #fff !important;
+}
 
 .ai_coach_block .question-response-container .btn-primary.disabled,
 .ai_coach_block .question-response-container .btn-primary.disabled:focus,
 .ai_coach_block .question-response-container .btn-primary.disabled:active,
-.ai_coach_block .question-response-container .btn-primary.disabled:hover
-{
+.ai_coach_block .question-response-container .btn-primary.disabled:hover {
     background: #fff;
     border-color: #b4b3b3;
     color: #b4b3b3;
@@ -144,7 +166,7 @@
     cursor: pointer;
     text-decoration: none;
     transition: color 0.25s ease-in-out, background 0.25s ease-in-out,
-        box-shadow 0.25s ease-in-out;
+    box-shadow 0.25s ease-in-out;
 }
 
 .ai_coach_block .question-response-container .btn-primary {
@@ -246,11 +268,11 @@
 
 /* ------------------------Studio API Key Field Styling--------------------- */
 
-#xb-field-edit-api_key{
-    -webkit-text-security : disc;
+#xb-field-edit-api_key {
+    -webkit-text-security: disc;
 }
 
-#xb-field-edit-api_key:focus, 
-#xb-field-edit-api_key:active{
-    -webkit-text-security : none;
+#xb-field-edit-api_key:focus,
+#xb-field-edit-api_key:active {
+    -webkit-text-security: none;
 }
