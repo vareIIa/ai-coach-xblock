@@ -107,15 +107,17 @@
 
 }
 
+.d-flex {
+    gap: 10px !important;
+}
+
 .ai_coach_block .question-response-container .btn-primary {
     border-radius: 4px;
     padding: 10px 40px;
-    background: #fff;
+    background: #8C44FF !important;
     border: 1px solid #8C44FF !important;
-    color: #8C44FF !important;
-    max-width: 215px;
-    min-width: 100px;
-    transition: background-color 0.3s, color 0.3s;
+    color: #fff !important;
+    width: 200px !important
 }
 
 .ai_coach_block .question-response-container .btn-primary:hover {
