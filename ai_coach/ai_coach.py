@@ -162,42 +162,48 @@ class AICoachXBlock(XBlock, StudioEditableXBlockMixin, CompletableXBlockMixin):
 
     @XBlock.json_handler
     def ask_from_coach(self, data, suffix=''):
+    try:
+        # Verifica se a resposta do aluno foi fornecida
+        if not data['answer']:
+            return {'error': _('Resposta necessária')}
+        
+        # Verifica se o limite de feedback foi atingido
+        if self.feedback_count >= self.feedback_threshold:
+            return {'error': _("Você atingiu o limite de feedbacks permitidos.")}
+        
+        # Atribui o conteúdo de 'student_answer' para 'context'
+        self.student_answer = data['answer'].strip()
+        prompt = self.student_answer.replace('{{question}}', f'"{self.question}"')
+        
+        url_api = "http://147.79.111.214:5000/chatbot/"
 
-        try:
-            if not data['answer']:
-                return {'error': _('Resposta necessária')}
+        # Constrói o payload para a requisição da API
+        data = {
+            "message": prompt
+        }
+        headers = {
+            "Content-Type": "application/json",
+            "api-key": "b7fe1fd2-7074-4ae0-95ec-23f637695b87"
+        }
 
-            if self.feedback_count >= self.feedback_threshold:
-                return {'error': _("You've")}
+        # Envia a requisição
+        response = requests.post(url_api, headers=headers, data=json.dumps(data))   
 
-            student_answer = data['answer'].strip()
-            prompt = self.context.replace('{{question}}', f'"{self.question}"')
-            prompt = prompt.replace('{{answer}}', f'"{student_answer}"')
-
-            url_api = "http://147.79.111.214:5000/chatbot/"
-
-            data = {
-                "message": prompt
+        # Processa a resposta da API
+        if response.status_code == 200:
+            coach_answer = response.json()['response']
+            self.feedback_count += 1
+            return {
+                'success': True,
+                'coach_answer': coach_answer,
+                'feedback_count': self.feedback_count,
+                'feedback_threshold': self.feedback_threshold
             }
-            headers = {
-                "Content-Type": "application/json",
-                "api-key": "b7fe1fd2-7074-4ae0-95ec-23f637695b87"
-            }
-            response = requests.post(url_api, headers=headers, data=json.dumps(data))   
+        else:
+            return {'error': _('Falha na comunicação com o coach de IA.')}
 
-            if response.status_code == 200:
-                coach_answer = response.json()['response']
-                self.feedback_count += 1
-                return {
-                    'success': True,
-                    'coach_answer': coach_answer,
-                    'feedback_count': self.feedback_count,
-                    'feedback_threshold': self.feedback_threshold
-                }
-            else:
-                return {'error': _('Falha na comunicação com o coach de IA.')}
-        except Exception as ex:
-            return {'error': _(str(ex))}
+    except Exception as ex:
+        return {'error': _(str(ex))}
 
     @XBlock.json_handler
     def submit_answer(self, data, suffix=''):
